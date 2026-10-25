@@ -28,7 +28,7 @@ function hashIp(ip: string | null | undefined) {
 }
 
 export const submitFeedback = createServerFn({ method: "POST" })
-  .inputValidator((data: unknown) => feedbackSchema.parse(data))
+  .validator((data: unknown) => feedbackSchema.parse(data))
   .handler(async ({ data }) => {
     // Honeypot — silently accept and drop
     if (data.website) {

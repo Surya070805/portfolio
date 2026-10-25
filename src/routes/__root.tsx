@@ -1,9 +1,11 @@
+import { useEffect } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
   Outlet,
   Link,
   createRootRouteWithContext,
   useRouter,
+  useRouterState,
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
@@ -13,7 +15,7 @@ import { ThemeProvider } from "@/hooks/use-theme";
 import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
 import { Toaster } from "@/components/ui/sonner";
-import { IntroLoader } from "@/components/intro-loader";
+import { GA_MEASUREMENT_ID, trackPageview } from "@/lib/analytics";
 
 const SITE_TITLE = "Surya Mitra — Data Analyst & AI Practitioner";
 const SITE_DESCRIPTION =
@@ -115,12 +117,19 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 
 const NO_FLASH = `(() => {try {const s = localStorage.getItem('portfolio-theme') || 'system';const d = s === 'dark' || (s === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);document.documentElement.classList.toggle('dark', d);document.documentElement.style.colorScheme = d ? 'dark' : 'light';} catch(e) {}})();`;
 
+const GA_INIT = `window.dataLayer = window.dataLayer || [];function gtag(){dataLayer.push(arguments);}window.gtag=gtag;gtag('js', new Date());gtag('config', '${GA_MEASUREMENT_ID}', { send_page_view: false });`;
+
 function RootShell({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
         <HeadContent />
         <script dangerouslySetInnerHTML={{ __html: NO_FLASH }} />
+        <script
+          async
+          src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
+        />
+        <script dangerouslySetInnerHTML={{ __html: GA_INIT }} />
       </head>
       <body>
         {children}
@@ -132,6 +141,15 @@ function RootShell({ children }: { children: React.ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const href = useRouterState({ select: (s) => s.location.href });
+
+  useEffect(() => {
+    trackPageview(href);
+  }, [href]);
+
+
+
+
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
@@ -143,7 +161,6 @@ function RootComponent() {
           <Footer />
         </div>
         <Toaster richColors closeButton position="bottom-right" />
-        <IntroLoader />
       </ThemeProvider>
     </QueryClientProvider>
   );

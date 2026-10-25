@@ -3,10 +3,9 @@ import { Container } from "./container";
 import { profile } from "@/data/profile";
 
 const NAV = [
+  { label: "Home", to: "/" as const },
   { label: "Projects", to: "/projects" as const },
   { label: "Videos", to: "/videos" as const },
-  { label: "Research", to: "/research" as const },
-  { label: "About", to: "/about" as const },
   { label: "Résumé", to: "/resume" as const },
   { label: "Contact", to: "/contact" as const },
 ];

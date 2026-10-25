@@ -1,8 +1,10 @@
+import { useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import { ArrowRight, ArrowUpRight, Download, FileText } from "lucide-react";
 import { Container } from "@/components/layout/container";
 import { Section, NextLink } from "@/components/ds";
+import { GrowthFlow } from "@/components/growth-flow";
 import { profile } from "@/data/profile";
 import { projects } from "@/data/projects";
 import resumeAsset from "@/assets/resume.pdf.asset.json";
@@ -47,6 +49,7 @@ export const Route = createFileRoute("/")({
 
 function Home() {
   const featured = projects.filter((p) => p.featured).slice(0, 3);
+  const [imgError, setImgError] = useState(false);
 
   return (
     <>
@@ -69,11 +72,11 @@ function Home() {
               </motion.h1>
 
               <p className="mt-6 max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg">
-                Every project here starts with a business question before it
-                reaches a dashboard. I'm interested in how organizations collect,
-                model, and use data to make decisions, and how analytics and AI
-                can improve that process. This portfolio is a collection of
-                those explorations.
+                Good analysis begins with a business question, not a dashboard.
+                I spend the time in SQL and dimensional data modeling up front
+                so that when insights reach leadership, they drive clear
+                decisions instead of debates. This portfolio captures my work
+                across analytics, data engineering, and machine learning.
               </p>
 
               <div className="mt-8 flex flex-wrap items-center gap-3">
@@ -81,7 +84,7 @@ function Home() {
                   to="/projects"
                   className="inline-flex items-center gap-2 rounded-md bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground transition-opacity hover:opacity-90"
                 >
-                  Read case studies
+                  Explore model view
                   <ArrowRight className="h-4 w-4" />
                 </Link>
                 <Link
@@ -92,7 +95,7 @@ function Home() {
                   View résumé
                 </Link>
                 <a
-                  href={resumeAsset.url}
+                  href="/Surya_Mitra_Resume.pdf"
                   download="Surya_Mitra_Resume.pdf"
                   className="inline-flex items-center gap-2 rounded-md px-3 py-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
                 >
@@ -112,12 +115,30 @@ function Home() {
               <div aria-hidden className="absolute -inset-3 -z-10 rounded-md border border-border" />
               <div aria-hidden className="absolute -bottom-3 -right-3 -z-10 h-full w-full rounded-md bg-primary/10" />
               <div className="overflow-hidden rounded-md border border-border bg-card shadow-card">
-                <img
-                  src={portraitAsset.url}
-                  alt={`${profile.name} — ${profile.role}`}
-                  loading="eager"
-                  className="aspect-[4/5] w-full object-cover"
-                />
+                {!imgError ? (
+                  <img
+                    src="/surya-portrait.jpeg"
+                    alt={`${profile.name} — ${profile.role}`}
+                    loading="eager"
+                    onError={() => setImgError(true)}
+                    className="aspect-[4/5] w-full object-cover"
+                  />
+                ) : (
+                  <div className="flex aspect-[4/5] w-full flex-col items-center justify-center bg-card p-6 text-center">
+                    <div className="flex h-20 w-20 items-center justify-center rounded-full bg-primary/10 font-serif text-2xl font-bold text-primary ring-8 ring-primary/5">
+                      SM
+                    </div>
+                    <div className="mt-4 font-serif text-lg font-semibold text-foreground">
+                      {profile.name}
+                    </div>
+                    <div className="font-mono text-xs text-muted-foreground">
+                      {profile.role} · {profile.location}
+                    </div>
+                    <div className="mt-3 rounded border border-border/80 bg-muted/60 px-2.5 py-1 font-mono text-[10.5px] text-muted-foreground">
+                      Open to Analyst Roles
+                    </div>
+                  </div>
+                )}
               </div>
               <figcaption className="mt-3 flex items-baseline justify-between gap-3 font-mono text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
                 <span>{profile.shortName}</span>
@@ -142,6 +163,11 @@ function Home() {
           </div>
         </Container>
       </section>
+
+      {/* GROWTH PATH & APPLICATION FOCUS ------------------------------ */}
+      <Section spacing="md">
+        <GrowthFlow />
+      </Section>
 
       {/* FEATURED CASE STUDIES ---------------------------------------- */}
       <Section spacing="lg">

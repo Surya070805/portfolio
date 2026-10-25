@@ -1,9 +1,19 @@
+import { useState } from "react";
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { motion } from "framer-motion";
-import { ArrowLeft, Github, ExternalLink } from "lucide-react";
+import { ArrowLeft, Github, ExternalLink, PlayCircle, Youtube } from "lucide-react";
 import { Section, SkillBadge } from "@/components/ds";
+import { DashboardWalkthroughs } from "@/components/dashboard-walkthroughs";
 import { getProject, projects, projectCategories } from "@/data/projects";
+import {
+  getEpisodesForProject,
+  getSeries,
+  youtubeEmbed,
+  youtubeThumb,
+  type VideoEpisode,
+} from "@/data/videos";
 import { useReveal } from "@/hooks/use-reveal";
+import { trackEvent } from "@/lib/analytics";
 import type { Project } from "@/types";
 
 export const Route = createFileRoute("/projects/$slug")({
@@ -62,6 +72,8 @@ function ProjectDetail() {
   const related = projects
     .filter((x) => x.slug !== p.slug && x.category === p.category)
     .slice(0, 2);
+
+  const relatedVideos = getEpisodesForProject(p.slug);
 
   return (
     <article>
@@ -228,6 +240,33 @@ function ProjectDetail() {
         </div>
       </Section>
 
+      {/* DASHBOARD WALKTHROUGH PLAYLIST */}
+      {p.videos && p.videos.length > 0 ? (
+        <Section spacing="md">
+          <DashboardWalkthroughs initialSlug={p.slug} />
+        </Section>
+      ) : null}
+
+      {/* RELATED VIDEO ---------------------------------------------- */}
+      {relatedVideos.length > 0 ? (
+        <Section spacing="md">
+          <div className="border-t-2 border-foreground pt-6">
+            <div className="text-eyebrow">Related video</div>
+            <div className="mt-6 space-y-8">
+              {relatedVideos.map((ep) => (
+                <RelatedVideo key={ep.id} episode={ep} />
+              ))}
+            </div>
+            <Link
+              to="/videos"
+              className="mt-6 inline-flex items-center gap-1.5 text-sm text-primary transition-opacity hover:opacity-80"
+            >
+              Browse the Knowledge Hub →
+            </Link>
+          </div>
+        </Section>
+      ) : null}
+
       {/* RELATED ----------------------------------------------------- */}
       {related.length > 0 ? (
         <Section spacing="md">
@@ -294,5 +333,88 @@ function CaseSection({
         {children}
       </div>
     </section>
+  );
+}
+
+function RelatedVideo({ episode }: { episode: VideoEpisode }) {
+  const [loaded, setLoaded] = useState(false);
+  const series = getSeries(episode.seriesId);
+
+  const onPlay = () => {
+    setLoaded(true);
+    trackEvent("project_related_video_play", {
+      slug: episode.relatedProjectSlug,
+      id: episode.youtubeId,
+    });
+  };
+
+  return (
+    <div className="grid gap-5 md:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)]">
+      <div className="relative aspect-video overflow-hidden rounded-md border border-border bg-black">
+        {loaded ? (
+          <iframe
+            src={youtubeEmbed(episode.youtubeId) + "&autoplay=1"}
+            title={episode.title}
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+            className="absolute inset-0 h-full w-full"
+          />
+        ) : (
+          <button
+            type="button"
+            onClick={onPlay}
+            className="group absolute inset-0 block"
+            aria-label={`Play ${episode.title}`}
+          >
+            <img
+              src={episode.thumbnail ?? youtubeThumb(episode.youtubeId)}
+              alt=""
+              loading="lazy"
+              className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.02]"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
+            <div className="absolute inset-0 flex items-center justify-center">
+              <span className="flex h-14 w-14 items-center justify-center rounded-full bg-background/95 shadow-lg transition-transform group-hover:scale-110">
+                <PlayCircle className="h-8 w-8 text-primary" />
+              </span>
+            </div>
+          </button>
+        )}
+      </div>
+      <div className="min-w-0">
+        <div className="flex flex-wrap items-center gap-2 font-mono text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
+          <span className="text-primary">
+            Ep {String(episode.episodeNumber).padStart(2, "0")}
+          </span>
+          {episode.duration ? (
+            <>
+              <span className="h-px w-4 bg-border" />
+              <span>{episode.duration}</span>
+            </>
+          ) : null}
+          {series ? (
+            <>
+              <span className="h-px w-4 bg-border" />
+              <span>{series.title}</span>
+            </>
+          ) : null}
+        </div>
+        <h3 className="mt-3 font-serif text-lg leading-snug tracking-tight">
+          {episode.title}
+        </h3>
+        <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+          {episode.description}
+        </p>
+        <a
+          href={episode.youtubeUrl}
+          target="_blank"
+          rel="noreferrer"
+          className="mt-4 inline-flex items-center gap-1.5 text-xs text-muted-foreground transition-colors hover:text-foreground"
+        >
+          <Youtube className="h-3.5 w-3.5" /> Watch on YouTube
+          <ExternalLink className="h-3 w-3" />
+        </a>
+      </div>
+    </div>
   );
 }

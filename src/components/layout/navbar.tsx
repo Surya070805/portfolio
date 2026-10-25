@@ -14,8 +14,6 @@ const NAV: NavItem[] = [
   { label: "Home", to: "/" },
   { label: "Projects", to: "/projects" },
   { label: "Videos", to: "/videos" },
-  { label: "Research", to: "/research" },
-  { label: "About", to: "/about" },
   { label: "Résumé", to: "/resume" },
   { label: "Contact", to: "/contact" },
 ];

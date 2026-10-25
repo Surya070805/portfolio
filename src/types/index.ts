@@ -3,11 +3,24 @@ export type ProjectCategory =
   | "data"
   | "backend"
   | "frontend"
-  | "research";
+  | "web"
+  | "research"
+  | "mcp";
 
 export type ProjectLink = { label: string; href: string };
 
 export type ProjectImage = { src: string; alt: string; caption?: string };
+
+export type ProjectVideo = {
+  id: string;
+  pageTitle: string;
+  audience: string;
+  businessQuestion: string;
+  youtubeId?: string;
+  youtubeUrl?: string;
+  duration?: string;
+  takeaway?: string;
+};
 
 export type Project = {
   slug: string;
@@ -18,6 +31,9 @@ export type Project = {
   status?: "shipped" | "in-progress" | "research";
   category: ProjectCategory;
   featured?: boolean;
+  isMain?: boolean;
+  tier?: "main" | "practice" | "hackathon" | "competition";
+  walkthroughStatus?: "available" | "coming-soon";
   links?: ProjectLink[];
   metrics?: { label: string; value: string }[];
 
@@ -36,6 +52,7 @@ export type Project = {
   githubUrl?: string;
   liveDemoUrl?: string;
   cover?: string;
+  videos?: ProjectVideo[];
 };
 
 export type SkillGroup = {
