@@ -77,10 +77,12 @@ export type Social = {
 
 export type Profile = {
   name: string;
+  fullName?: string;
   shortName: string;
   role: string;
   location: string;
   email: string;
+  phone?: string;
   bio: string;
   focus: string[];
   socials: Social[];
@@ -92,12 +94,26 @@ export type Feedback = {
   message: string;
 };
 
+export type Experience = {
+  role: string;
+  company: string;
+  period: string;
+  location?: string;
+  bullets: string[];
+  skills?: string[];
+};
+
 export type Education = {
   institution: string;
   degree: string;
   period: string;
   grade?: string;
   skills?: string[];
+};
+
+export type LanguageProficiency = {
+  language: string;
+  level: string;
 };
 
 export type PhilosophyPoint = { title: string; statement: string };
@@ -110,6 +126,8 @@ export type AboutData = {
     points: PhilosophyPoint[];
   };
   education: Education[];
+  experience?: Experience[];
+  languages?: LanguageProficiency[];
 };
 
 export type VideoItem = {

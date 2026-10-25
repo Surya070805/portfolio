@@ -2,19 +2,27 @@ import type { SkillGroup } from "@/types";
 
 export const skillGroups: SkillGroup[] = [
   {
-    label: "Spreadsheets",
-    items: ["Excel", "Google Sheets", "Pivot tables", "Lookups"],
+    label: "Programming & Databases",
+    items: ["Python", "SQL", "Microsoft SQL Server", "SQLite"],
   },
   {
-    label: "Databases & SQL",
-    items: ["SQL", "MySQL", "Joins & subqueries", "Window functions"],
-  },
-  {
-    label: "Python",
-    items: ["pandas", "NumPy", "Jupyter", "EDA & data cleaning"],
+    label: "Data Analytics & Statistics",
+    items: ["Pandas", "NumPy", "EDA", "Data Cleaning", "Hypothesis Testing"],
   },
   {
     label: "Business Intelligence",
-    items: ["Power BI", "Tableau", "DAX", "Power Query"],
+    items: ["Power BI", "Excel", "Power Query", "DAX", "Star Schema Modeling"],
+  },
+  {
+    label: "Machine Learning",
+    items: ["Scikit-learn", "Supervised Learning", "Feature Engineering", "Model Evaluation"],
+  },
+  {
+    label: "Generative AI & LLMs",
+    items: ["LLMs", "Prompt Engineering", "Embeddings", "RAG"],
+  },
+  {
+    label: "Developer Tools & Platforms",
+    items: ["Jupyter Notebook", "Google Colab", "Git", "GitHub", "Hugging Face"],
   },
 ];
