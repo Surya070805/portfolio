@@ -19,6 +19,10 @@ import {
   Calendar,
   Layers,
   Sparkles,
+  Eye,
+  ZoomIn,
+  ZoomOut,
+  Maximize2,
 } from "lucide-react";
 import { profile } from "@/data/profile";
 import { about } from "@/data/about";
@@ -86,8 +90,10 @@ const RESUME_PROJECTS = [
 ];
 
 function ResumePage() {
-  const url = "/Surya_Mitra_Resume.pdf";
-  const [viewMode, setViewMode] = useState<"web" | "pdf">("web");
+  const pdfUrl = "/Surya_Mitra_Resume.pdf";
+  const previewImgUrl = "/surya-resume-page.png";
+  const [viewMode, setViewMode] = useState<"visual" | "pdf" | "web">("visual");
+  const [zoomLevel, setZoomLevel] = useState<number>(100);
 
   return (
     <Section spacing="md">
@@ -111,7 +117,31 @@ function ResumePage() {
 
         <div className="flex flex-wrap items-center gap-2">
           {/* Mode Switcher */}
-          <div className="mr-2 inline-flex rounded-md border border-border bg-muted/50 p-1">
+          <div className="inline-flex rounded-md border border-border bg-muted/50 p-1">
+            <button
+              onClick={() => setViewMode("visual")}
+              className={cn(
+                "rounded px-3 py-1.5 text-xs font-medium transition-colors flex items-center gap-1.5",
+                viewMode === "visual"
+                  ? "bg-background text-foreground shadow-xs font-semibold"
+                  : "text-muted-foreground hover:text-foreground"
+              )}
+            >
+              <Eye className="h-3.5 w-3.5 text-primary" />
+              Visual Document
+            </button>
+            <button
+              onClick={() => setViewMode("pdf")}
+              className={cn(
+                "rounded px-3 py-1.5 text-xs font-medium transition-colors flex items-center gap-1.5",
+                viewMode === "pdf"
+                  ? "bg-background text-foreground shadow-xs font-semibold"
+                  : "text-muted-foreground hover:text-foreground"
+              )}
+            >
+              <FileText className="h-3.5 w-3.5 text-primary" />
+              Interactive PDF
+            </button>
             <button
               onClick={() => setViewMode("web")}
               className={cn(
@@ -123,21 +153,10 @@ function ResumePage() {
             >
               Web Summary
             </button>
-            <button
-              onClick={() => setViewMode("pdf")}
-              className={cn(
-                "rounded px-3 py-1.5 text-xs font-medium transition-colors",
-                viewMode === "pdf"
-                  ? "bg-background text-foreground shadow-xs font-semibold"
-                  : "text-muted-foreground hover:text-foreground"
-              )}
-            >
-              PDF Document
-            </button>
           </div>
 
           <a
-            href={url}
+            href={pdfUrl}
             download="Surya_Mitra_Resume.pdf"
             className="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-opacity hover:opacity-90 shadow-xs"
           >
@@ -146,7 +165,7 @@ function ResumePage() {
           </a>
 
           <a
-            href={url}
+            href={pdfUrl}
             target="_blank"
             rel="noreferrer"
             className="inline-flex items-center gap-2 rounded-md border border-border bg-background px-3.5 py-2 text-sm font-medium transition-colors hover:bg-accent"
@@ -156,12 +175,12 @@ function ResumePage() {
           </a>
 
           <a
-            href={url}
+            href={pdfUrl}
             target="_blank"
             rel="noreferrer"
             onClick={(e) => {
               e.preventDefault();
-              const w = window.open(url, "_blank");
+              const w = window.open(pdfUrl, "_blank");
               w?.addEventListener("load", () => w.print());
             }}
             className="inline-flex items-center gap-2 rounded-md border border-border bg-background px-3 py-2 text-sm transition-colors hover:bg-accent"
@@ -172,8 +191,115 @@ function ResumePage() {
         </div>
       </div>
 
-      {/* WEB-NATIVE SCANNABLE VIEW */}
-      {viewMode === "web" ? (
+      {/* 1. VISUAL DOCUMENT VIEW (High-Res 1:1 Page, 100% Reliable on all browsers and mobile) */}
+      {viewMode === "visual" && (
+        <div className="space-y-4">
+          {/* Document Controls Bar */}
+          <div className="flex flex-wrap items-center justify-between gap-3 rounded-md border border-border bg-muted/40 px-4 py-2 text-xs font-mono">
+            <span className="text-muted-foreground">
+              Single-Page Document · 100% Verified Layout
+            </span>
+
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setZoomLevel((z) => Math.max(75, z - 15))}
+                className="inline-flex items-center gap-1 rounded border border-border bg-background px-2 py-1 hover:bg-accent transition-colors"
+                title="Zoom Out"
+              >
+                <ZoomOut className="h-3 w-3" />
+                <span>-</span>
+              </button>
+              <span className="px-1 text-muted-foreground">{zoomLevel}%</span>
+              <button
+                onClick={() => setZoomLevel((z) => Math.min(150, z + 15))}
+                className="inline-flex items-center gap-1 rounded border border-border bg-background px-2 py-1 hover:bg-accent transition-colors"
+                title="Zoom In"
+              >
+                <ZoomIn className="h-3 w-3" />
+                <span>+</span>
+              </button>
+              <button
+                onClick={() => setZoomLevel(100)}
+                className="inline-flex items-center gap-1 rounded border border-border bg-background px-2 py-1 hover:bg-accent transition-colors text-[11px]"
+              >
+                Reset
+              </button>
+
+              <a
+                href={pdfUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-1 rounded border border-border bg-background px-2.5 py-1 text-primary hover:bg-accent transition-colors"
+              >
+                <Maximize2 className="h-3 w-3" />
+                Fullscreen PDF
+              </a>
+            </div>
+          </div>
+
+          {/* Paper Container */}
+          <div className="overflow-x-auto rounded-lg border border-border bg-muted/30 p-4 sm:p-8 flex justify-center shadow-inner">
+            <div
+              style={{ width: `${zoomLevel}%`, maxWidth: "860px", minWidth: "320px" }}
+              className="relative transition-all duration-200"
+            >
+              <div className="overflow-hidden rounded-md bg-white shadow-2xl ring-1 ring-black/10">
+                <img
+                  src={previewImgUrl}
+                  alt="Suryamitra Velugula Official Resume"
+                  className="w-full h-auto block"
+                  loading="eager"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div className="text-center pt-2 text-xs text-muted-foreground font-mono">
+            Want to use the browser native reader?{" "}
+            <button
+              onClick={() => setViewMode("pdf")}
+              className="text-primary underline hover:text-foreground font-semibold"
+            >
+              Switch to Interactive PDF Reader
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* 2. INTERACTIVE PDF VIEWER (Browser iframe/object embed) */}
+      {viewMode === "pdf" && (
+        <div className="space-y-4">
+          <div className="overflow-hidden rounded-lg border border-border bg-card shadow-card">
+            <iframe
+              src={`${pdfUrl}#toolbar=1&navpanes=0&view=FitH`}
+              className="h-[85vh] w-full border-0"
+              title="Suryamitra Velugula Official Résumé"
+            />
+          </div>
+
+          <div className="flex flex-wrap items-center justify-between gap-3 text-xs text-muted-foreground font-mono px-1">
+            <span>
+              If your browser blocks inline PDF embedding, use{" "}
+              <button
+                onClick={() => setViewMode("visual")}
+                className="text-primary underline hover:text-foreground font-semibold"
+              >
+                Visual Document mode
+              </button>
+            </span>
+            <a
+              href={pdfUrl}
+              download="Surya_Mitra_Resume.pdf"
+              className="text-primary underline hover:text-foreground"
+            >
+              Download direct PDF copy →
+            </a>
+          </div>
+        </div>
+      )}
+
+      {/* 3. WEB-NATIVE SCANNABLE VIEW */}
+      {viewMode === "web" && (
         <div className="space-y-8">
           {/* Resume Header Card with contact info */}
           <div className="rounded-lg border border-border bg-card p-6 sm:p-8">
@@ -471,31 +597,6 @@ function ResumePage() {
               ))}
             </div>
           </div>
-        </div>
-      ) : (
-        /* PDF OBJECT EMBED VIEW */
-        <div className="overflow-hidden rounded-lg border border-border bg-card shadow-card">
-          <object
-            data={`${url}#view=FitH`}
-            type="application/pdf"
-            className="h-[82vh] w-full"
-            aria-label="Suryamitra Velugula résumé PDF"
-          >
-            <div className="p-12 text-center text-sm text-muted-foreground">
-              <FileText className="mx-auto h-10 w-10 text-muted-foreground/60 mb-3" />
-              Your browser cannot display the PDF preview directly.
-              <div className="mt-3">
-                <a
-                  href={url}
-                  download="Surya_Mitra_Resume.pdf"
-                  className="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm text-primary-foreground font-medium"
-                >
-                  <Download className="h-4 w-4" />
-                  Download Resume PDF
-                </a>
-              </div>
-            </div>
-          </object>
         </div>
       )}
 
