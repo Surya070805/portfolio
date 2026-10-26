@@ -351,13 +351,13 @@ function ResumePage() {
                   github.com/Surya070805
                 </a>
                 <a
-                  href="https://datascienceportfolio.io/suryamitrav"
+                  href="https://portfolio-ten-pi-pai4jcpgcr.vercel.app"
                   target="_blank"
                   rel="noreferrer"
                   className="inline-flex items-center gap-1.5 rounded border border-border bg-muted/60 px-3 py-1.5 text-muted-foreground hover:text-foreground hover:border-primary/50 transition-colors"
                 >
                   <Globe className="h-3.5 w-3.5 text-primary" />
-                  datascienceportfolio.io
+                  portfolio.io
                 </a>
               </div>
             </div>

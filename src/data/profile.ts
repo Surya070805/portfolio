@@ -19,7 +19,7 @@ export const profile: Profile = {
   socials: [
     { label: "LinkedIn", href: "https://www.linkedin.com/in/suryamitrav", icon: "linkedin", handle: "in/suryamitrav" },
     { label: "GitHub", href: "https://github.com/Surya070805", icon: "github", handle: "@Surya070805" },
-    { label: "Portfolio", href: "https://datascienceportfolio.io/suryamitrav", icon: "mail", handle: "portfolio.io" },
+    { label: "portfolio.io", href: "https://portfolio-ten-pi-pai4jcpgcr.vercel.app", icon: "mail", handle: "portfolio.io" },
     { label: "Email", href: "mailto:suryamitrav@gmail.com", icon: "mail", handle: "suryamitrav@gmail.com" },
   ],
 };
